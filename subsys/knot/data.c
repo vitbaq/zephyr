@@ -129,3 +129,29 @@ s8_t config_data_item(u8_t id, u8_t evflags, u16_t time_sec,
 
 	return 0;
 }
+
+s8_t create_schema(knot_msg_schema *msg)
+{
+	static struct _data_items *item;
+
+	if (item == NULL){
+		item = NODE_RX(data_items_list.head.node);	
+	}
+
+	msg->sensor_id = id;
+	msg->values.value_type = item->value_type;
+	msg->values.unit = item->unit;
+	msg->values.type_id = item->type_id;
+	strncpy(msg->values.name, item->name, sizeof(msg->values.name));
+
+	if (item.node.next == NULL){
+		msg->hdr.type = KNOT_MSG_SCHEMA_END;
+	} else {
+		msg->hdr.type = KNOT_MSG_SCHEMA;
+		item = NODE_RX(item.node.next);
+	}
+
+	msg->hdr.payload_len = sizeof(msg->values) + sizeof(msg->sensor_id);
+
+	return 0;
+}
