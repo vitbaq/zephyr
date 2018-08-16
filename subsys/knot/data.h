@@ -6,6 +6,27 @@
 #include <knot_types.h>
 #include <knot_protocol.h>
 
+typedef int (*data_function)		(void *value);
+
+/* Return ammount read or written */
+typedef int (*raw_read_function)	(u8_t *buffer, u8_t len);
+typedef int (*raw_write_function)	(const u8_t *buffer, u8_t len);
+
+typedef struct __attribute__ ((packed)) {
+	data_function 		read;
+	data_function 		write;
+} data_functions;
+
+typedef struct __attribute__ ((packed)) {
+	raw_read_function 	read;
+	raw_write_function 	write;
+} raw_functions;
+
+typedef union __attribute__ ((packed)) {
+	data_functions		data_f;
+	raw_functions		raw_f;
+} knot_functions;
+
 struct _data_items {
 	/* KNoT Identifier */
 	u8_t			id;
@@ -28,4 +49,7 @@ struct _data_items {
 
 	/* Time Values */
 	s64_t			last_timeout;	// Stores the last time the data was sent
+
+	/* Read and Write app functions */
+	knot_functions		functions;
 };
