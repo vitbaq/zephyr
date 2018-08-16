@@ -12,6 +12,19 @@
 static sys_slist_t data_items_list;
 static struct _data_items *last_item;
 
+static struct _data_items *find_data_item(u8_t id)
+{
+	struct _data_items *item, *aux;
+
+	SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&data_items_list, item, aux, node)
+	{
+		if (item->id == id)
+			return item;
+	}
+
+	return NULL;
+}
+
 static int data_function_is_valid(knot_functions *func)
 {
 	if (func == NULL)
