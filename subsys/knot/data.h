@@ -31,6 +31,9 @@ struct _data_items {
 	/* KNoT Identifier */
 	u8_t			id;
 
+	/* Node Identifier */
+	sys_snode_t		node;
+
 	/* Schema Values */
 	u8_t			value_type;	// KNOT_VALUE_TYPE_* (int, float, bool, raw)
 	u8_t			unit;		// KNOT_UNIT_*
