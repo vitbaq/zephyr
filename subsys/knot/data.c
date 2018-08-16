@@ -9,6 +9,8 @@
 #include <knot_protocol.h>
 #include "main.h"
 
+#define NODE_RX(_node) CONTAINER_OF(_node, struct _data_items, node)
+
 static sys_slist_t data_items_list;
 static struct _data_items *last_item;
 
@@ -34,6 +36,23 @@ static int data_function_is_valid(knot_functions *func)
 		return -1;
 
 	return 0;
+}
+
+void reset_data_items(void)
+{
+	struct _data_items *item;
+	sys_snode_t *snode;
+
+	//FIXME: Use SYS_SLIST_FOR_EACH_CONTAINER_SAFE macro
+	do {
+		snode = sys_slist_get(&data_items_list);
+		if (snode != NULL){
+			item = NODE_RX(snode);
+			k_free(item);
+		}
+	} while (snode != NULL);
+
+	sys_slist_init(&data_items_list);
 }
 
 s8_t register_data_item(u8_t id, const char *name,
