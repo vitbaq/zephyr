@@ -98,3 +98,34 @@ s8_t register_data_item(u8_t id, const char *name,
 
 	return 0;
 }
+
+s8_t config_data_item(u8_t id, u8_t evflags, u16_t time_sec,
+			knot_value_type *lower, knot_value_type *upper)
+{
+	struct _data_items *item;
+
+	/*Check if config is valid*/
+	if (knot_config_is_valid(evflags, time_sec, lower, upper)
+								!= KNOT_SUCCESS)
+		return -1;
+
+	item = find_data_item(id);
+	if (!item)
+		return -1;
+
+	item->config.event_flags = evflags;
+	item->config.time_sec = time_sec;
+
+	/*
+	 * "lower/upper limit" is a union, we need
+	 * just to set the "biggest" member.
+	 */
+
+	if (lower)
+		memcpy(&(item->config.lower_limit), lower, sizeof(*lower));
+
+	if (upper)
+		memcpy(&(item->config.upper_limit), upper, sizeof(*upper));
+
+	return 0;
+}
