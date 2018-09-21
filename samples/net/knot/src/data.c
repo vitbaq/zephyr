@@ -8,6 +8,7 @@
 
 #include "knot_protocol.h"
 
+#include "data_app.h"
 #include "data.h"
 
 #define KNOT_THING_DATA_MAX	3
@@ -33,4 +34,8 @@ static struct _data_items {
 
 	/* Time values */
 	u32_t			last_timeout;
+
+	/* KNoT callback functions */
+	knot_callback		read;
+	knot_callback		write;
 } data_items[KNOT_THING_DATA_MAX];
