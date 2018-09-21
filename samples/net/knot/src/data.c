@@ -6,6 +6,7 @@
 
 #include <kernel.h>
 
+#include "knot_types.h"
 #include "knot_protocol.h"
 
 #include "data_app.h"
@@ -39,3 +40,42 @@ static struct _data_items {
 	knot_callback		read;
 	knot_callback		write;
 } data_items[KNOT_THING_DATA_MAX];
+
+void data_items_reset(void)
+{
+	u8_t id;
+
+	for (id = 0; id < KNOT_THING_DATA_MAX; ++id) {
+		data_items[id].id = -1;
+		data_items[id].name = NULL;
+		data_items[id].type_id = KNOT_TYPE_ID_INVALID;
+		data_items[id].unit = KNOT_UNIT_NOT_APPLICABLE;
+		data_items[id].value_type = KNOT_VALUE_TYPE_INVALID;
+		data_items[id].config.event_flags = KNOT_EVT_FLAG_UNREGISTERED;
+		
+		data_items[id].new_value = false;
+
+		/* As "last_value" is a union,
+		we need just to set the "biggest" member */
+		data_items[id].last_value.val_f.value_int = 0;
+		data_items[id].last_value.val_f.value_dec = 0;
+
+		/* As "lower_limit" is a union,
+		we need just to set the "biggest" member */
+		data_items[id].config.lower_limit.val_f.value_int = 0;
+		data_items[id].config.lower_limit.val_f.value_dec = 0;
+
+		/* As "upper_limit" is a union,
+		we need just to set the "biggest" member */
+		data_items[id].config.upper_limit.val_f.value_int = 0;
+		data_items[id].config.upper_limit.val_f.value_dec = 0;
+		data_items[id].last_value_raw = NULL;
+		data_items[id].raw_length = 0;
+
+		/* Last timeout reset */
+		data_items[id].last_timeout = 0;
+
+		data_items[id].read = NULL;
+		data_items[id].write = NULL;
+	}
+}
