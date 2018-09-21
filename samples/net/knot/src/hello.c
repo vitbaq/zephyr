@@ -18,7 +18,7 @@
 #include <zephyr.h>
 #include <net/net_core.h>
 
-#include "knot_app.h"
+#include "KNoTThing.h"
 
 void setup(void)
 {
