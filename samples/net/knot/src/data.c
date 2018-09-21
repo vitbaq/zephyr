@@ -328,3 +328,19 @@ s8_t data_set_value(u8_t id, u8_t value_type, knot_value_type value)
 
 	return 0;
 }
+
+s8_t data_get_value(u8_t id, u8_t value_type, knot_value_type *value)
+{
+	switch (value_type) {
+	case KNOT_VALUE_TYPE_INT:
+	case KNOT_VALUE_TYPE_FLOAT:
+	case KNOT_VALUE_TYPE_BOOL:
+		*value = data_items[id].last_value;
+		break;
+	case KNOT_VALUE_TYPE_RAW:
+		break;
+	default:
+		return -1;
+	}
+	return 0;
+}
