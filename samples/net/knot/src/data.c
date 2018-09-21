@@ -173,3 +173,40 @@ s8_t data_create_schema(u8_t id, knot_msg_schema *msg)
 
 	return 0;
 }
+
+s8_t data_write_callback(u8_t id, knot_msg_data *data)
+{
+	int ret = -1;
+
+	if (data_items[id].write == NULL)
+		return ret;
+
+	switch (data_items[id].value_type) {
+	case KNOT_VALUE_TYPE_INT:
+	case KNOT_VALUE_TYPE_FLOAT:
+	case KNOT_VALUE_TYPE_BOOL:
+		data_items[id].last_value = data->payload;
+		data_items[id].write(id);
+		break;
+	case KNOT_VALUE_TYPE_RAW:
+		break;
+	default:
+		return -1;
+	}
+
+	return 0;
+}
+
+s8_t data_read_callback(u8_t id)
+{
+	if (data_items[id].id == -1)
+		return -1;
+
+	if (data_items[id].read == NULL)
+		return -1;
+
+	if (data_items[id].read(id) < 0)
+		return -1;
+
+	return 0;
+}
