@@ -5,6 +5,7 @@
  */
 
 #include <kernel.h>
+#include <string.h>
 
 #include "knot_types.h"
 
@@ -150,6 +151,25 @@ s8_t data_item_config(u8_t id, u8_t evflags, u16_t time_sec,
 	if (upper)
 		memcpy(&(data_items[id].config.upper_limit), 
 							upper, sizeof(*upper));
+
+	return 0;
+}
+
+s8_t data_create_schema(u8_t id, knot_msg_schema *msg)
+{
+	if (id == KNOT_THING_DATA_MAX-1)
+		msg->hdr.type = KNOT_MSG_SCHEMA_END;
+	else
+		msg->hdr.type = KNOT_MSG_SCHEMA;
+
+	msg->sensor_id = id;
+	msg->values.value_type = data_items[id].value_type;
+	msg->values.unit = data_items[id].unit;
+	msg->values.type_id = data_items[id].type_id;
+	strncpy(msg->values.name, data_items[id].name, 
+						sizeof(msg->values.name));
+
+	msg->hdr.payload_len = sizeof(msg->values) + sizeof(msg->sensor_id);
 
 	return 0;
 }

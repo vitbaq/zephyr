@@ -5,3 +5,5 @@
  */
 
 void data_items_reset(void);
+
+s8_t data_create_schema(u8_t id, knot_msg_schema *msg);
