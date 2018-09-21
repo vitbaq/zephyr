@@ -210,3 +210,47 @@ s8_t data_read_callback(u8_t id)
 
 	return 0;
 }
+
+s8_t data_verify_value(knot_msg_data *data)
+{
+	static u8_t id = 0;
+
+	data_read_callback(id);
+	if (data_items[id].new_value == true){
+
+		data->hdr.type = KNOT_MSG_DATA;
+		data->sensor_id = id;
+		data->hdr.payload_len = sizeof(data->sensor_id);
+
+		switch (data_items[id].value_type) {
+		case KNOT_VALUE_TYPE_INT:
+			data->payload.val_i.value =
+				data_items[id].last_value.val_i.value;
+			data->hdr.payload_len += sizeof(knot_value_type_int);
+			break;
+		case KNOT_VALUE_TYPE_FLOAT:
+			data->payload.val_f.value_int =
+				data_items[id].last_value.val_f.value_int;
+			data->payload.val_f.value_dec =
+				data_items[id].last_value.val_f.value_dec;
+			data->hdr.payload_len += sizeof(knot_value_type_float);
+			break;
+		case KNOT_VALUE_TYPE_BOOL:
+			data->payload.val_b = data_items[id].last_value.val_b;
+			data->hdr.payload_len += sizeof(knot_value_type_bool);
+			break;
+		case KNOT_VALUE_TYPE_RAW:
+			break;
+		default:
+			return -1;
+		}
+
+		data_items[id].new_value = false;
+	}
+
+	id++;
+	if (id > KNOT_THING_DATA_MAX)
+		id = 0;
+
+	return 0;
+}

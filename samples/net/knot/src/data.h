@@ -11,3 +11,5 @@ s8_t data_create_schema(u8_t id, knot_msg_schema *msg);
 s8_t data_write_callback(u8_t id, knot_msg_data *data);
 
 s8_t data_read_callback(u8_t id);
+
+s8_t data_verify_value(knot_msg_data *data);
