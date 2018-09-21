@@ -14,3 +14,5 @@ s8_t data_item_register(u8_t id, const char *name,
 
 s8_t data_item_config(u8_t id, u8_t evflags, u16_t time_sec,
 			knot_value_type *lower, knot_value_type *upper);
+
+s8_t data_set_value(u8_t id, u8_t value_type, knot_value_type value);

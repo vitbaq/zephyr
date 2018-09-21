@@ -254,3 +254,77 @@ s8_t data_verify_value(knot_msg_data *data)
 
 	return 0;
 }
+
+s8_t data_set_value(u8_t id, u8_t value_type, knot_value_type value)
+{
+	u32_t current_time;
+
+	switch (value_type) {
+	case KNOT_VALUE_TYPE_INT:
+		if (KNOT_EVT_FLAG_UPPER_THRESHOLD &
+			data_items[id].config.event_flags
+			&& value.val_i.value >
+			data_items[id].last_value.val_i.value)
+			data_items[id].new_value = true;
+
+		if (KNOT_EVT_FLAG_LOWER_THRESHOLD &
+		data_items[id].config.event_flags
+		&& value.val_i.value <
+		data_items[id].last_value.val_i.value)
+			data_items[id].new_value = true;
+
+		if (value.val_i.value != data_items[id].last_value.val_i.value){
+			data_items[id].last_value.val_i.value =
+							value.val_i.value;
+			if (KNOT_EVT_FLAG_CHANGE &
+				data_items[id].config.event_flags)
+				data_items[id].new_value = true;
+		}
+		break;
+	case KNOT_VALUE_TYPE_FLOAT:
+		if (KNOT_EVT_FLAG_UPPER_THRESHOLD &
+		data_items[id].config.event_flags
+		&& value.val_f.value_int >
+		data_items[id].last_value.val_f.value_int)
+			data_items[id].new_value = true;
+
+		if (KNOT_EVT_FLAG_LOWER_THRESHOLD &
+		data_items[id].config.event_flags
+		&& value.val_f.value_int <
+		data_items[id].last_value.val_f.value_int)
+			data_items[id].new_value = true;
+
+		if (value.val_f.value_int !=
+			data_items[id].last_value.val_f.value_int){
+			data_items[id].last_value.val_f.value_int =
+							value.val_f.value_int;
+			data_items[id].last_value.val_f.value_dec =
+							value.val_f.value_dec;
+			if (KNOT_EVT_FLAG_CHANGE &
+			data_items[id].config.event_flags)
+				data_items[id].new_value = true;
+		}
+		break;
+	case KNOT_VALUE_TYPE_BOOL:
+		if (value.val_b != data_items[id].last_value.val_b){
+			data_items[id].last_value.val_b = value.val_b;
+			if (KNOT_EVT_FLAG_CHANGE &
+			data_items[id].config.event_flags)
+				data_items[id].new_value = true;
+		}
+		break;
+	case KNOT_VALUE_TYPE_RAW:
+		break;
+	default:
+		return -1;
+	}
+
+	if (KNOT_EVT_FLAG_TIME & data_items[id].config.event_flags){
+		current_time = k_uptime_get();
+		current_time -= data_items[id].last_timeout;
+		if (current_time >= (data_items[id].config.time_sec * 1000))
+			data_items[id].new_value = true;
+	}
+
+	return 0;
+}
