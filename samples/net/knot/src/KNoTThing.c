@@ -11,6 +11,81 @@
 
 #include "KNoTThing.h"
 
+int knot_set_int(u8_t id, int value)
+{
+	knot_value_type int_v;
+
+	int_v.val_i.value = value;
+
+	return data_set_value(id, KNOT_VALUE_TYPE_INT, int_v);
+}
+
+int knot_get_int(u8_t id, int *value)
+{
+	int ret;
+	knot_value_type int_v;
+
+	ret = data_get_value(id, KNOT_VALUE_TYPE_INT, &int_v);
+
+	*value = int_v.val_i.value;
+
+	return ret;
+}
+
+int knot_set_float(u8_t id, s32_t value_int, u32_t value_dec)
+{
+	knot_value_type float_v;
+
+	float_v.val_f.value_int = value_int;
+	float_v.val_f.value_dec = value_dec;
+
+	return data_set_value(id, KNOT_VALUE_TYPE_FLOAT, float_v);
+}
+
+int knot_get_float(u8_t id, s32_t *value_int, u32_t *value_dec)
+{
+	int ret;
+	knot_value_type float_v;
+
+	ret = data_get_value(id, KNOT_VALUE_TYPE_FLOAT, &float_v);
+
+	*value_int = float_v.val_f.value_int;
+	*value_dec = float_v.val_f.value_dec;
+
+	return ret;
+}
+
+int knot_set_bool(u8_t id, bool value)
+{
+	knot_value_type bool_v;
+
+	bool_v.val_b = value;
+
+	return data_set_value(id, KNOT_VALUE_TYPE_BOOL, bool_v);
+}
+
+int knot_get_bool(u8_t id, bool *value)
+{
+	int ret;
+	knot_value_type bool_v;
+
+	ret = data_get_value(id, KNOT_VALUE_TYPE_BOOL, &bool_v);
+
+	*value = bool_v.val_b;
+
+	return ret;
+}
+
+int knot_set_raw(u8_t id, u8_t buffer, s32_t len)
+{
+	return -1;
+}
+
+int knot_get_raw(u8_t id)
+{
+	return -1;
+}
+
 int knot_register_data(u8_t sensor_id, const char *name, u16_t type_id,
 			u8_t unit, u8_t value_type,
 			knot_callback read, knot_callback write)

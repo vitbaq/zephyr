@@ -7,6 +7,18 @@
 #include "data_app.h"
 #include "knot_app.h"
 
+int knot_set_int(u8_t id, int value);
+
+int knot_get_int(u8_t id, int *value);
+
+int knot_set_float(u8_t id, s32_t value_int, u32_t value_dec);
+
+int knot_get_float(u8_t id, s32_t *value_int, u32_t *value_dec);
+
+int knot_set_bool(u8_t id, bool value);
+
+int knot_get_bool(u8_t id, bool *value);
+
 int knot_register_data(u8_t sensor_id, const char *name, u16_t type_id,
 			u8_t unit, u8_t value_type,
 			knot_callback read, knot_callback write);
