@@ -77,8 +77,8 @@ s8_t kaio_pdu_create_schema(u8_t id, knot_msg_schema *msg)
 {
 	struct aio *io;
 
-	if (aio[id].id != -1)
-		return -EACCES;
+	if (aio[id].id == -1)
+		return -EINVAL;
 
 	io = &aio[id];
 
