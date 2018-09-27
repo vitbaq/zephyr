@@ -266,3 +266,31 @@ static s8_t kaio_set_value(u8_t id, knot_value_type value)
 
 	return 0;
 }
+
+static s8_t kaio_get_value(u8_t id, knot_value_type *value)
+{
+	struct aio *io;
+
+	if (aio[id].id == 0xff)
+		return -EINVAL;
+
+	io = &aio[id];
+
+	switch (io->schema.value_type) {
+	case KNOT_VALUE_TYPE_INT:
+		value->val_i.value = io->value.val_i.value;
+		break;
+	case KNOT_VALUE_TYPE_FLOAT:
+		value->val_f.value_int = io->value.val_f.value_int;
+		value->val_f.value_dec = io->value.val_f.value_dec;
+		break;
+	case KNOT_VALUE_TYPE_BOOL:
+		value->val_b = io->value.val_b;
+		break;
+	case KNOT_VALUE_TYPE_RAW:
+		break;
+	default:
+		return -1;
+	}
+	return 0;
+}
