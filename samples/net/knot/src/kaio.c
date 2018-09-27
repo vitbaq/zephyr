@@ -180,3 +180,17 @@ s8_t kaio_write(u8_t id, knot_value_type *value)
 
 	return 0;
 }
+
+s8_t kaio_refresh_value(u8_t id)
+{
+	struct aio *io;
+
+	if (aio[id].id == 0xff)
+		return -EINVAL;
+
+	io = &aio[id];
+
+	io->refresh = true;
+
+	return 0;
+}
