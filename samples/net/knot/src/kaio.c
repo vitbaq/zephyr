@@ -146,3 +146,37 @@ s8_t kaio_read(u8_t id, knot_value_type *value)
 
 	return 0;
 }
+
+s8_t kaio_write(u8_t id, knot_value_type *value)
+{
+	struct aio *io;
+
+	if (aio[id].id == 0xff)
+		return -EINVAL;
+
+	io = &aio[id];
+
+	if (io->write_cb == NULL)
+		return -1;
+
+	switch (io->schema.value_type) {
+	case KNOT_VALUE_TYPE_INT:
+		io->value.val_i.value = value->val_i.value;
+		io->write_cb(id);
+	case KNOT_VALUE_TYPE_FLOAT:
+		io->value.val_f.value_int = value->val_f.value_int;
+		io->value.val_f.value_dec = value->val_f.value_dec;
+		io->write_cb(id);
+		break;
+	case KNOT_VALUE_TYPE_BOOL:
+		io->value.val_b = value->val_b;
+		io->write_cb(id);
+		break;
+	case KNOT_VALUE_TYPE_RAW:
+		break;
+	default:
+		return -1;
+	}
+
+	return 0;
+}
