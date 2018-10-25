@@ -294,8 +294,10 @@ static int openthread_init(struct net_if *iface)
 {
 	struct openthread_context *ot_context = net_if_l2_data(iface);
 	u8_t xpanid[8];
+	otMasterKey masterkey;
 
 	net_bytes_from_str(xpanid, 8, (char *)CONFIG_OPENTHREAD_XPANID);
+	net_bytes_from_str(masterkey.m8, 16, (char *)CONFIG_OPENTHREAD_MASTERKEY);
 
 	NET_DBG("openthread_init");
 
@@ -320,6 +322,7 @@ static int openthread_init(struct net_if *iface)
 	otLinkSetChannel(ot_context->instance, CONFIG_OPENTHREAD_CHANNEL);
 	otLinkSetPanId(ot_context->instance, CONFIG_OPENTHREAD_PANID);
 	otThreadSetExtendedPanId(ot_context->instance, xpanid);
+	otThreadSetMasterKey(ot_context->instance, &masterkey);
 	otIp6SetEnabled(ot_context->instance, true);
 	otThreadSetEnabled(ot_context->instance, true);
 	otIp6SetReceiveFilterEnabled(ot_context->instance, true);
