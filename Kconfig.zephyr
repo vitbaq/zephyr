@@ -36,4 +36,6 @@ source "subsys/Kconfig"
 
 source "ext/Kconfig"
 
+source "samples/Kconfig"
+
 source "tests/Kconfig"
